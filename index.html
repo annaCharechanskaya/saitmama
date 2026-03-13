@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика | Репетитор + ученики (стабильная версия)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: #1e293b;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1440px;
+            background: #ffffff;
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            padding: 32px;
+        }
+
+        /* адаптация для телефонов - мягкая, без поломок */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            .app-container {
+                padding: 20px;
+                border-radius: 32px;
+            }
+        }
+
+        /* экран входа */
+        .login-screen {
+            max-width: 440px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 48px;
+            padding: 40px;
+            box-shadow: 0 10px 30px -10px #d9c9cf;
+            border: 1px solid #f0e2e8;
+        }
+        .login-screen h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #9d6b81;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 16px 22px;
+            border: 1.5px solid #eedfe5;
+            border-radius: 60px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .login-input:focus {
+            border-color: #c28b9b;
+            box-shadow: 0 0 0 3px #fae2ec;
+        }
+        .login-btn {
+            background: #8b6479;
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 60px;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .login-btn:hover {
+            background: #6d4b5d;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        /* шапка */
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .role-badge {
+            background: #f1eef2;
+            border-radius: 60px;
+            padding: 12px 32px;
+            font-weight: 600;
+            color: #4b3f46;
+            border: 1px solid #e0d3da;
+        }
+        .logout-main {
+            background: none;
+            border: 1.5px solid #d0c1ca;
+            padding: 10px 26px;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #4b3f46;
+        }
+        .logout-main:hover {
+            background: #f3e9ef;
+        }
+
+        /* вкладки для репетитора и ученика */
+        .tabs, .student-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #eddce5;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .tab, .student-tab {
+            background: none;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6d4b5d;
+            border-radius: 60px 60px 0 0;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .tab.active, .student-tab.active {
+            background: #f4e6ed;
+            color: #4f2e41;
+        }
+        .tab-content, .student-tab-content {
+            display: none;
+        }
+        .tab-content.active, .student-tab-content.active {
+            display: block;
+        }
+
+        /* карточки статистики */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+        .stat-card {
+            background: #faf8f9;
+            border-radius: 40px;
+            padding: 24px 30px;
+            flex: 1 1 200px;
+            border: 1px solid #e9dde3;
+            box-shadow: 0 4px 12px #f0e4ea;
+        }
+        .stat-card .stat-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #7d6271;
+            margin-bottom: 12px;
+        }
+        .stat-card .stat-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #2c1f27;
+        }
+
+        /* админка */
+        .teacher-panel {
+            background: #ffffff;
+            border-radius: 48px;
+            padding: 32px;
+            margin-bottom: 40px;
+            border: 1px solid #eddce5;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #6d4b5d;
+            margin-bottom: 28px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .admin-card {
+            background: #fdfafb;
+            border-radius: 40px;
+            padding: 28px;
+            border: 1px solid #eedce5;
+            box-shadow: 0 4px 12px #f3e4eb;
+        }
+        .admin-card h3 {
+            font-size: 1.3rem;
+            color: #8b5d75;
+            margin-bottom: 20px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1.5px solid #eedce5;
+            border-radius: 60px;
+            margin: 8px 0 16px;
+            background: white;
+        }
+        .btn-admin {
+            background: #8b6479;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: 0.15s;
+            border: 1px solid #bc9aaf;
+        }
+        .btn-admin:hover {
+            background: #6d4b5d;
+        }
+        .btn-warn {
+            background: #e2cfd9;
+            color: #402f38;
+        }
+
+        /* фото-загрузка */
+        .image-upload-wrapper {
+            background: #fdf3f7;
+            border-radius: 30px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1px dashed #cfa7bb;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 24px;
+            margin: 12px 0;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px #ddc0cd;
+        }
+        .file-input {
+            background: #f4e7ed;
+            border-radius: 60px;
+            padding: 10px 16px;
+            width: 100%;
+            border: none;
+            margin: 8px 0;
+        }
+
+        /* список учеников */
+        .student-list {
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .student-item {
+            background: #fdf3f8;
+            border-radius: 40px;
+            padding: 12px 20px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #e6d2dd;
+        }
+
+        /* уроки в админке */
+        .lesson-admin-item {
+            background: #fcf3f8;
+            border-radius: 60px;
+            padding: 16px 24px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid #e6d2dd;
+        }
+        .lesson-admin-item select {
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 1.5px solid #dbb9cb;
+            background: white;
+        }
+        .delete-lesson-btn {
+            background: #e2cfd9;
+            border: none;
+            color: #802d53;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* таблица оплат */
+        .payment-table {
+            background: #fdfafb;
+            border-radius: 40px;
+            padding: 28px;
+            margin-top: 28px;
+            border: 1px solid #eddce5;
+        }
+        .payment-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 120px 100px;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #edd0dd;
+        }
+        .payment-header {
+            font-weight: 700;
+            color: #6d4b5d;
+        }
+        .paid-input {
+            width: 100px;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1.5px solid #e2c9d6;
+        }
+
+        /* кабинет ученика */
+        .student-dash {
+            background: #ffffff;
+            border-radius: 48px;
+            padding: 32px;
+            border: 1px solid #eddce5;
+        }
+        .lessons-table {
+            background: #fcf6f9;
+            border-radius: 40px;
+            overflow: hidden;
+            margin: 20px 0 32px;
+            border: 1px solid #eddce5;
+        }
+        .lesson-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1.8fr 1fr;
+            padding: 16px 24px;
+            border-bottom: 1px solid #edd0dd;
+            align-items: center;
+        }
+        .lesson-header {
+            background: #f4e6ed;
+            font-weight: 700;
+            color: #5b3f4e;
+        }
+        .link-telemost {
+            background: #f4e6ed;
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #7b5570;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* ДЗ с картинками */
+        .hw-attached {
+            margin-top: 24px;
+        }
+        .hw-question-block {
+            background: #fdf6fa;
+            border-radius: 40px;
+            padding: 28px;
+            margin-bottom: 24px;
+            border: 1px solid #eddce5;
+            position: relative;
+        }
+        .hw-image {
+            max-width: 300px;
+            max-height: 250px;
+            border-radius: 32px;
+            margin: 16px 0;
+            border: 3px solid white;
+            box-shadow: 0 4px 14px #ddc0cf;
+            object-fit: cover;
+        }
+        .answer-input {
+            padding: 14px 22px;
+            border-radius: 60px;
+            border: 1.5px solid #edd0dd;
+            width: calc(100% - 160px);
+            margin-right: 12px;
+        }
+        .check-btn {
+            background: #8b6479;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .correct { color: #6d4b5d; font-weight: 700; }
+        .wrong { color: #a54848; font-weight: 700; }
+
+        /* кнопка удалить ДЗ у ученика */
+        .delete-hw-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f1d7e2;
+            border: none;
+            color: #8b4b6b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+
+        /* таблица результатов */
+        .results-table {
+            background: #fdfafb;
+            border-radius: 40px;
+            padding: 28px;
+            margin-top: 28px;
+            border: 1px solid #eddce5;
+        }
+        .result-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 2fr 1fr 1fr;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #edd0dd;
+        }
+        .result-header {
+            font-weight: 700;
+            color: #6d4b5d;
+        }
+        .block-chip {
+            background: #f2e6ed;
+            border-radius: 40px;
+            padding: 8px 18px 8px 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #dbb9cb;
+        }
+        .block-chip button {
+            background: none;
+            border: none;
+            color: #9f597b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 6px;
+        }
+
+        /* адаптация для телефона - аккуратная */
+        @media (max-width: 768px) {
+            .tabs, .student-tabs {
+                gap: 4px;
+            }
+            .tab, .student-tab {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            .stats-row {
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px 20px;
+            }
+            .stat-card .stat-value {
+                font-size: 2rem;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .payment-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                border: 1px solid #edd0dd;
+                border-radius: 20px;
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            .payment-header {
+                display: none;
+            }
+            .result-row {
+                grid-template-columns: 1fr;
+                border: 1px solid #edd0dd;
+                border-radius: 20px;
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            .result-header {
+                display: none;
+            }
+            .lesson-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                border: 1px solid #edd0dd;
+                border-radius: 20px;
+                margin-bottom: 12px;
+                padding: 16px;
+            }
+            .lesson-header {
+                display: none;
+            }
+            .lesson-admin-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .answer-input {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            .check-btn {
+                width: 100%;
+            }
+            .delete-hw-btn {
+                position: static;
+                margin-bottom: 16px;
+                display: inline-block;
+            }
+        }
+
+        hr { border: 1px solid #eddce5; margin: 32px 0; }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+    <!-- Вход -->
+    <div id="loginScreen" class="login-screen">
+        <h2><i class="fas fa-flask"></i> Физика</h2>
+        <input type="text" id="loginName" class="login-input" placeholder="Имя" value="Репетитор">
+        <input type="password" id="loginPass" class="login-input" placeholder="Пароль" value="1111">
+        <button class="login-btn" id="loginBtn">Войти</button>
+    </div>
+
+    <!-- Дашборд -->
+    <div id="dashboard" class="dashboard">
+        <div class="role-header">
+            <div class="role-badge"><i class="fas fa-user-circle" style="color:#9d6b81;"></i> <span id="displayName"></span></div>
+            <button class="logout-main" id="logoutMain">Выйти</button>
+        </div>
+
+        <!-- Панель репетитора -->
+        <div id="teacherOnlyPanel" style="display: none;">
+            <div class="teacher-panel">
+                <h2 class="section-title"><i class="fas fa-chalkboard"></i> Управление</h2>
+
+                <!-- Вкладки репетитора -->
+                <div class="tabs">
+                    <button class="tab active" id="tabMain">Основное</button>
+                    <button class="tab" id="tabHW">Домашние задания</button>
+                    <button class="tab" id="tabResults">Результаты</button>
+                </div>
+
+                <!-- Основное -->
+                <div id="tabMainContent" class="tab-content active">
+                    <div class="admin-card" style="margin-bottom:28px;">
+                        <h3><i class="fas fa-sliders-h"></i> Статусы и удаление занятий</h3>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom:24px;">
+                            <select id="statusStudentSelect" class="input-field" style="width:auto; min-width:150px;"></select>
+                            <select id="statusLessonSelect" class="input-field" style="width:auto; min-width:240px;"></select>
+                            <select id="newStatusSelect" class="input-field" style="width:auto;">
+                                <option value="запланировано">Запланировано</option>
+                                <option value="прошло">Прошло</option>
+                                <option value="отменено">Отменено</option>
+                            </select>
+                            <button class="btn-admin" id="applyStatusBtn">Применить статус</button>
+                        </div>
+                        <h4>Все уроки (можно удалить)</h4>
+                        <div id="allLessonsList" style="margin-top:16px;"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="admin-card">
+                            <h3><i class="fas fa-user-plus"></i> Ученики</h3>
+                            <input type="text" id="newStudentName" class="input-field" placeholder="Имя ученика">
+                            <button class="btn-admin" id="addStudentBtn">Добавить</button>
+                            <div class="student-list" id="studentListContainer"></div>
+                        </div>
+                        <div class="admin-card">
+                            <h3><i class="fas fa-calendar-plus"></i> Новый урок</h3>
+                            <select id="lessonStudentSelect" class="input-field"></select>
+                            <input type="text" id="lessonTopic" class="input-field" placeholder="Тема" value="Кинематика">
+                            <input type="text" id="lessonDate" class="input-field" placeholder="Дата время" value="2025-04-04 17:00">
+                            <input type="text" id="lessonLink" class="input-field" placeholder="Ссылка телемост" value="https://telemost.yandex.ru/j/72637530095625">
+                            <button class="btn-admin" id="createLessonBtn">Создать урок</button>
+                        </div>
+                    </div>
+
+                    <div class="payment-table">
+                        <h3 style="margin-bottom:20px; color:#6d4b5d;"><i class="fas fa-credit-card"></i> Оплаты учеников</h3>
+                        <div class="payment-row payment-header"><div>Ученик</div><div>Оплачено</div><div>Осталось</div><div></div></div>
+                        <div id="paymentRowsContainer"></div>
+                    </div>
+                </div>
+
+                <!-- ДЗ -->
+                <div id="tabHWContent" class="tab-content">
+                    <div class="grid-2">
+                        <div class="admin-card">
+                            <h3><i class="fas fa-layer-group"></i> Создать блок ДЗ (с фото)</h3>
+                            <input type="text" id="hwBlockName" class="input-field" placeholder="Название блока" value="Колебания">
+                            <div id="dynamicQuestions">
+                                <div class="image-upload-wrapper" id="qBlock0">
+                                    <input type="text" placeholder="Текст вопроса" class="input-field" id="qText0" value="Чему равна частота?">
+                                    <input type="number" placeholder="Числовой ответ" class="input-field" id="qAns0" value="12.5">
+                                    <div class="image-upload-wrapper">
+                                        <label>📷 Загрузить фото:</label>
+                                        <input type="file" accept="image/*" class="file-input" id="file0" onchange="previewImage(0)">
+                                        <input type="hidden" id="qImg0" value="">
+                                        <div id="preview0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn-admin" id="addQuestionFieldBtn">➕ Добавить вопрос с фото</button>
+                            <button class="btn-admin" id="saveHomeworkBlockBtn">💾 Сохранить блок</button>
+                        </div>
+                        <div class="admin-card">
+                            <h3><i class="fas fa-paperclip"></i> Прикрепить ДЗ ученику</h3>
+                            <select id="attachStudentSelect" class="input-field"></select>
+                            <select id="attachBlockSelect" class="input-field"></select>
+                            <button class="btn-admin" id="attachHWBtn">Прикрепить</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3 style="color:#6d4b5d;">📚 Готовые блоки (нажмите ✕ чтобы удалить навсегда)</h3>
+                    <div id="adminHWBlockList" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top:16px;"></div>
+                </div>
+
+                <!-- Результаты -->
+                <div id="tabResultsContent" class="tab-content">
+                    <div class="results-table">
+                        <h3 style="margin-bottom:20px; color:#6d4b5d;"><i class="fas fa-clipboard-check"></i> Результаты домашних заданий</h3>
+                        <div class="result-row result-header">
+                            <div>Ученик</div><div>Блок</div><div>Вопрос</div><div>Ответ</div><div>Статус</div>
+                        </div>
+                        <div id="resultsContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кабинет ученика -->
+        <div id="studentCabinet">
+            <div class="student-dash">
+                <div class="stats-row">
+                    <div class="stat-card"><span class="stat-title">Оплачено</span><div class="stat-value" id="studentPaid">0</div></div>
+                    <div class="stat-card"><span class="stat-title">Осталось</span><div class="stat-value" id="studentRemaining">0</div></div>
+                </div>
+
+                <!-- Вкладки ученика -->
+                <div class="student-tabs">
+                    <button class="student-tab active" id="studentTabLessons">📅 Занятия</button>
+                    <button class="student-tab" id="studentTabHW">📝 Домашние задания</button>
+                </div>
+
+                <!-- Занятия ученика -->
+                <div id="studentLessonsContent" class="student-tab-content active">
+                    <div class="lessons-table" id="studentLessonsList"></div>
+                </div>
+
+                <!-- ДЗ ученика -->
+                <div id="studentHWContent" class="student-tab-content">
+                    <div class="hw-attached" id="studentHWList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Глобальные функции для предпросмотра фото
+    window.previewImage = function(index) {
+        const fileInput = document.getElementById('file' + index);
+        const previewDiv = document.getElementById('preview' + index);
+        const hidden = document.getElementById('qImg' + index);
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (previewDiv) previewDiv.innerHTML = `<img src="${e.target.result}" class="image-preview">`;
+                if (hidden) hidden.value = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    };
+
+    (function() {
+        let students = JSON.parse(localStorage.getItem('students')) || ['Маша', 'Иван'];
+        let teacherPassword = '1111';
+        let lessons = JSON.parse(localStorage.getItem('lessons')) || [];
+        let homeworkBlocks = JSON.parse(localStorage.getItem('homeworkBlocks')) || [
+            { id: 'b1', name: 'Колебания', questions: [{text:'Частота (Гц)?', answer:12.5, image:''},{text:'Период (мс)?', answer:1000, image:''}] }
+        ];
+        let attachedHW = JSON.parse(localStorage.getItem('attachedHW')) || [];
+        let studentPaidMap = JSON.parse(localStorage.getItem('studentPaidMap')) || {};
+
+        let currentUser = null;
+
+        function saveAll() {
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('lessons', JSON.stringify(lessons));
+            localStorage.setItem('homeworkBlocks', JSON.stringify(homeworkBlocks));
+            localStorage.setItem('attachedHW', JSON.stringify(attachedHW));
+            localStorage.setItem('studentPaidMap', JSON.stringify(studentPaidMap));
+        }
+
+        // Элементы
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutMain');
+        const displayNameSpan = document.getElementById('displayName');
+        const teacherPanel = document.getElementById('teacherOnlyPanel');
+
+        // Вкладки репетитора
+        const tabMain = document.getElementById('tabMain');
+        const tabHW = document.getElementById('tabHW');
+        const tabResults = document.getElementById('tabResults');
+        const tabMainContent = document.getElementById('tabMainContent');
+        const tabHWContent = document.getElementById('tabHWContent');
+        const tabResultsContent = document.getElementById('tabResultsContent');
+
+        if (tabMain) {
+            tabMain.addEventListener('click', function() {
+                tabMain.classList.add('active');
+                tabHW.classList.remove('active');
+                tabResults.classList.remove('active');
+                tabMainContent.classList.add('active');
+                tabHWContent.classList.remove('active');
+                tabResultsContent.classList.remove('active');
+            });
+        }
+
+        if (tabHW) {
+            tabHW.addEventListener('click', function() {
+                tabHW.classList.add('active');
+                tabMain.classList.remove('active');
+                tabResults.classList.remove('active');
+                tabHWContent.classList.add('active');
+                tabMainContent.classList.remove('active');
+                tabResultsContent.classList.remove('active');
+            });
+        }
+
+        if (tabResults) {
+            tabResults.addEventListener('click', function() {
+                tabResults.classList.add('active');
+                tabMain.classList.remove('active');
+                tabHW.classList.remove('active');
+                tabResultsContent.classList.add('active');
+                tabMainContent.classList.remove('active');
+                tabHWContent.classList.remove('active');
+            });
+        }
+
+        // Вкладки ученика
+        const studentTabLessons = document.getElementById('studentTabLessons');
+        const studentTabHW = document.getElementById('studentTabHW');
+        const studentLessonsContent = document.getElementById('studentLessonsContent');
+        const studentHWContent = document.getElementById('studentHWContent');
+
+        if (studentTabLessons) {
+            studentTabLessons.addEventListener('click', function() {
+                studentTabLessons.classList.add('active');
+                studentTabHW.classList.remove('active');
+                studentLessonsContent.classList.add('active');
+                studentHWContent.classList.remove('active');
+            });
+        }
+
+        if (studentTabHW) {
+            studentTabHW.addEventListener('click', function() {
+                studentTabHW.classList.add('active');
+                studentTabLessons.classList.remove('active');
+                studentHWContent.classList.add('active');
+                studentLessonsContent.classList.remove('active');
+            });
+        }
+
+        loginBtn.addEventListener('click', function() {
+            const name = document.getElementById('loginName').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            if (!name) return alert('Введите имя');
+
+            if (pass === teacherPassword) {
+                currentUser = { name: 'Репетитор', isTeacher: true };
+            } else {
+                if (!students.includes(name)) {
+                    alert('Ученик с таким именем не найден');
+                    return;
+                }
+                currentUser = { name: name, isTeacher: false };
+            }
+
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            displayNameSpan.innerText = currentUser.isTeacher ? 'Репетитор' : currentUser.name;
+
+            if (currentUser.isTeacher) {
+                teacherPanel.style.display = 'block';
+                renderTeacherPanels();
+            } else {
+                teacherPanel.style.display = 'none';
+            }
+            renderStudentCabinet();
+        });
+
+        logoutBtn.addEventListener('click', function() {
+            currentUser = null;
+            loginScreen.style.display = 'block';
+            dashboard.style.display = 'none';
+        });
+
+        function renderTeacherPanels() {
+            ['lessonStudentSelect', 'attachStudentSelect', 'statusStudentSelect'].forEach(function(id) {
+                let sel = document.getElementById(id);
+                if (sel) sel.innerHTML = students.map(function(s) { return `<option value="${s}">${s}</option>`; }).join('');
+            });
+
+            let studentList = document.getElementById('studentListContainer');
+            if (studentList) {
+                studentList.innerHTML = students.map(function(s) {
+                    return `
+                        <div class="student-item">
+                            <span>${s}</span>
+                            <button class="btn-admin btn-warn" style="padding:6px 14px;" onclick="removeStudent('${s}')">Удалить</button>
+                        </div>`;
+                }).join('');
+            }
+
+            let attachBlockSelect = document.getElementById('attachBlockSelect');
+            if (attachBlockSelect) {
+                attachBlockSelect.innerHTML = homeworkBlocks.map(function(b) { return `<option value="${b.id}">${b.name}</option>`; }).join('');
+            }
+
+            let hwList = document.getElementById('adminHWBlockList');
+            if (hwList) {
+                hwList.innerHTML = homeworkBlocks.map(function(b) {
+                    return `
+                        <span class="block-chip">
+                            ${b.name}
+                            <button onclick="deleteHomeworkBlock('${b.id}')" title="Удалить блок">✕</button>
+                        </span>`;
+                }).join('');
+            }
+
+            renderPaymentTable();
+            renderResultsTable();
+            updateLessonSelectForStatus();
+            renderAllLessonsList();
+        }
+
+        window.deleteHomeworkBlock = function(blockId) {
+            if (confirm('Удалить этот блок ДЗ? Это действие необратимо.')) {
+                homeworkBlocks = homeworkBlocks.filter(function(b) { return b.id !== blockId; });
+                attachedHW = attachedHW.filter(function(a) { return a.blockId !== blockId; });
+                saveAll();
+                renderTeacherPanels();
+                renderStudentCabinet();
+            }
+        };
+
+        window.deleteLesson = function(lessonId) {
+            if (confirm('Удалить это занятие?')) {
+                lessons = lessons.filter(function(l) { return l.id != lessonId; });
+                saveAll();
+                renderTeacherPanels();
+                renderStudentCabinet();
+            }
+        };
+
+        window.deleteAttachedHW = function(attachedIndex) {
+            if (confirm('Удалить это домашнее задание у ученика?')) {
+                attachedHW.splice(attachedIndex, 1);
+                saveAll();
+                renderTeacherPanels();
+                renderStudentCabinet();
+            }
+        };
+
+        function renderResultsTable() {
+            let container = document.getElementById('resultsContainer');
+            if (!container) return;
+            let html = '';
+            attachedHW.forEach(function(hw, idx) {
+                hw.questions.forEach(function(q, qidx) {
+                    let userAns = hw.userAnswers[qidx] || '';
+                    let isCorrect = false;
+                    if (userAns !== '') {
+                        let numAns = parseFloat(userAns.toString().replace(',','.'));
+                        isCorrect = !isNaN(numAns) && Math.abs(numAns - q.answer) < 0.001;
+                    }
+                    html += `
+                        <div class="result-row">
+                            <div><strong>${hw.studentName}</strong></div>
+                            <div>${hw.blockName}</div>
+                            <div>${q.text.substring(0,30)}${q.text.length>30?'...':''}</div>
+                            <div>${userAns || '—'}</div>
+                            <div style="color: ${isCorrect ? '#6d4b5d' : '#a54848'}; font-weight:600;">
+                                ${userAns === '' ? 'нет ответа' : (isCorrect ? '✓ верно' : '✗ неверно')}
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            container.innerHTML = html || '<p style="color:#7a6380; padding:16px;">Пока нет данных</p>';
+        }
+
+        function updateLessonSelectForStatus() {
+            let studentSel = document.getElementById('statusStudentSelect');
+            let lessonSel = document.getElementById('statusLessonSelect');
+            if (!studentSel || !lessonSel) return;
+            let student = studentSel.value;
+            let filtered = lessons.filter(function(l) { return l.studentName === student; });
+            lessonSel.innerHTML = filtered.map(function(l) { 
+                return `<option value="${l.id}">${l.date} – ${l.topic} (${l.status})</option>`; 
+            }).join('');
+        }
+
+        function renderAllLessonsList() {
+            let container = document.getElementById('allLessonsList');
+            if (!container) return;
+            container.innerHTML = lessons.map(function(l) {
+                return `
+                    <div class="lesson-admin-item">
+                        <span style="min-width:100px;"><strong>${l.studentName}</strong></span>
+                        <span style="min-width:160px;">${l.date}</span>
+                        <span>${l.topic}</span>
+                        <select onchange="changeLessonStatus('${l.id}', this.value)">
+                            <option value="запланировано" ${l.status==='запланировано'?'selected':''}>Запл.</option>
+                            <option value="прошло" ${l.status==='прошло'?'selected':''}>Прошло</option>
+                            <option value="отменено" ${l.status==='отменено'?'selected':''}>Отменено</option>
+                        </select>
+                        <a href="${l.link}" target="_blank" style="color:#8b6479;">🔗</a>
+                        <button class="delete-lesson-btn" onclick="deleteLesson('${l.id}')"><i class="fas fa-trash"></i> Удалить</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.changeLessonStatus = function(id, status) {
+            let lesson = lessons.find(function(l) { return l.id == id; });
+            if (lesson) { lesson.status = status; saveAll(); renderTeacherPanels(); renderStudentCabinet(); }
+        };
+
+        let statusStudentSelect = document.getElementById('statusStudentSelect');
+        if (statusStudentSelect) {
+            statusStudentSelect.addEventListener('change', updateLessonSelectForStatus);
+        }
+
+        let applyStatusBtn = document.getElementById('applyStatusBtn');
+        if (applyStatusBtn) {
+            applyStatusBtn.addEventListener('click', function() {
+                let student = document.getElementById('statusStudentSelect').value;
+                let lessonId = document.getElementById('statusLessonSelect').value;
+                let status = document.getElementById('newStatusSelect').value;
+                let lesson = lessons.find(function(l) { return l.id == lessonId && l.studentName === student; });
+                if (lesson) { lesson.status = status; saveAll(); renderTeacherPanels(); renderStudentCabinet(); alert('Статус обновлён'); }
+            });
+        }
+
+        function renderPaymentTable() {
+            let container = document.getElementById('paymentRowsContainer');
+            if (!container) return;
+            container.innerHTML = students.map(function(s) {
+                let paid = studentPaidMap[s] || 0;
+                let past = lessons.filter(function(l) { return l.studentName === s && l.status === 'прошло'; }).length;
+                let rem = Math.max(0, paid - past);
+                return `
+                    <div class="payment-row">
+                        <div><strong>${s}</strong></div>
+                        <div><input type="number" class="paid-input" id="paid_${s}" value="${paid}" min="0"></div>
+                        <div id="rem_${s}">${rem}</div>
+                        <div><button class="btn-admin" style="padding:8px 16px;" onclick="updatePaid('${s}')">Сохранить</button></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.updatePaid = function(student) {
+            let inp = document.getElementById(`paid_${student}`);
+            let val = parseInt(inp.value) || 0;
+            studentPaidMap[student] = val;
+            saveAll();
+            let past = lessons.filter(function(l) { return l.studentName === student && l.status === 'прошло'; }).length;
+            let remSpan = document.getElementById(`rem_${student}`);
+            if (remSpan) remSpan.innerText = Math.max(0, val - past);
+        };
+
+        window.removeStudent = function(name) {
+            if (confirm('Удалить ученика?')) {
+                students = students.filter(function(s) { return s !== name; });
+                delete studentPaidMap[name];
+                lessons = lessons.filter(function(l) { return l.studentName !== name; });
+                attachedHW = attachedHW.filter(function(a) { return a.studentName !== name; });
+                saveAll(); 
+                renderTeacherPanels();
+            }
+        };
+
+        let addStudentBtn = document.getElementById('addStudentBtn');
+        if (addStudentBtn) {
+            addStudentBtn.addEventListener('click', function() {
+                let n = document.getElementById('newStudentName').value.trim();
+                if (n && !students.includes(n)) { 
+                    students.push(n); 
+                    studentPaidMap[n] = 0; 
+                    saveAll(); 
+                    renderTeacherPanels(); 
+                }
+            });
+        }
+
+        let createLessonBtn = document.getElementById('createLessonBtn');
+        if (createLessonBtn) {
+            createLessonBtn.addEventListener('click', function() {
+                let s = document.getElementById('lessonStudentSelect').value;
+                let t = document.getElementById('lessonTopic').value;
+                let d = document.getElementById('lessonDate').value;
+                let l = document.getElementById('lessonLink').value;
+                if (s && t) { 
+                    lessons.push({ 
+                        id: Date.now() + Math.random(), 
+                        studentName: s, 
+                        topic: t, 
+                        date: d, 
+                        link: l, 
+                        status: 'запланировано' 
+                    });
+                    saveAll(); 
+                    renderTeacherPanels(); 
+                    alert('Урок создан'); 
+                }
+            });
+        }
+
+        let qCount = 1;
+        let addQuestionBtn = document.getElementById('addQuestionFieldBtn');
+        if (addQuestionBtn) {
+            addQuestionBtn.addEventListener('click', function() {
+                let div = document.createElement('div');
+                div.className = 'image-upload-wrapper';
+                div.innerHTML = `
+                    <input type="text" placeholder="Текст вопроса" class="input-field" id="qText${qCount}">
+                    <input type="number" placeholder="Числовой ответ" class="input-field" id="qAns${qCount}">
+                    <label>📷 Загрузить фото:</label>
+                    <input type="file" accept="image/*" class="file-input" id="file${qCount}" onchange="previewImage(${qCount})">
+                    <input type="hidden" id="qImg${qCount}" value="">
+                    <div id="preview${qCount}"></div>
+                `;
+                document.getElementById('dynamicQuestions').appendChild(div);
+                qCount++;
+            });
+        }
+
+        let saveHWBtn = document.getElementById('saveHomeworkBlockBtn');
+        if (saveHWBtn) {
+            saveHWBtn.addEventListener('click', function() {
+                let name = document.getElementById('hwBlockName').value.trim();
+                let qs = [];
+                for (let i = 0; i < qCount; i++) {
+                    let txt = document.getElementById(`qText${i}`)?.value;
+                    let ans = parseFloat(document.getElementById(`qAns${i}`)?.value);
+                    let img = document.getElementById(`qImg${i}`)?.value || '';
+                    if (txt && !isNaN(ans)) {
+                        qs.push({ text: txt, answer: ans, image: img });
+                    }
+                }
+                if (name && qs.length) { 
+                    homeworkBlocks.push({ id: 'b' + Date.now(), name: name, questions: qs }); 
+                    saveAll(); 
+                    renderTeacherPanels(); 
+                    alert('Блок сохранён с фото');
+                } else {
+                    alert('Заполните название и хотя бы один вопрос');
+                }
+            });
+        }
+
+        let attachHWBtn = document.getElementById('attachHWBtn');
+        if (attachHWBtn) {
+            attachHWBtn.addEventListener('click', function() {
+                let s = document.getElementById('attachStudentSelect').value;
+                let bid = document.getElementById('attachBlockSelect').value;
+                let b = homeworkBlocks.find(function(b) { return b.id === bid; });
+                if (s && b) { 
+                    attachedHW.push({ 
+                        studentName: s, 
+                        blockId: b.id, 
+                        blockName: b.name, 
+                        questions: b.questions.map(function(q) { return { ...q }; }), 
+                        userAnswers: Array(b.questions.length).fill(''), 
+                        attachedAt: new Date().toISOString() 
+                    });
+                    saveAll(); 
+                    renderTeacherPanels(); 
+                    alert('Блок прикреплён'); 
+                }
+            });
+        }
+
+        function renderStudentCabinet() {
+            if (!currentUser) return;
+            let name = currentUser.isTeacher ? 'Маша' : currentUser.name;
+            let myLessons = lessons.filter(function(l) { return l.studentName === name; });
+            let lessonHtml = '<div class="lesson-row lesson-header"><div>Дата</div><div>Тема</div><div>Ссылка</div><div>Статус</div></div>';
+            myLessons.forEach(function(l) { 
+                lessonHtml += `
+                    <div class="lesson-row">
+                        <div>${l.date}</div>
+                        <div>${l.topic}</div>
+                        <div><a href="${l.link}" class="link-telemost" target="_blank">Телемост</a></div>
+                        <div>${l.status}</div>
+                    </div>
+                `; 
+            });
+            document.getElementById('studentLessonsList').innerHTML = lessonHtml || '<p>Нет занятий</p>';
+
+            let paid = studentPaidMap[name] || 0;
+            let past = myLessons.filter(function(l) { return l.status === 'прошло'; }).length;
+            document.getElementById('studentPaid').innerText = paid;
+            document.getElementById('studentRemaining').innerText = Math.max(0, paid - past);
+
+            let myHW = attachedHW.filter(function(a) { return a.studentName === name; });
+            let hwHtml = '';
+            myHW.forEach(function(hw, idx) {
+                let globalIdx = attachedHW.findIndex(function(a) { 
+                    return a.studentName === name && a.blockId === hw.blockId && a.attachedAt === hw.attachedAt; 
+                });
+                hwHtml += `<div class="hw-question-block" style="position:relative;">`;
+                if (currentUser.isTeacher) {
+                    hwHtml += `<button class="delete-hw-btn" onclick="deleteAttachedHW(${globalIdx})"><i class="fas fa-trash-alt"></i> Удалить у ученика</button>`;
+                }
+                hwHtml += `<h4 style="margin-bottom:16px; color:#8b6479;">${hw.blockName}</h4>`;
+                hw.questions.forEach(function(q, qidx) {
+                    hwHtml += `<div><p><strong>${q.text}</strong></p>`;
+                    if (q.image && q.image.startsWith('data:image')) {
+                        hwHtml += `<img src="${q.image}" class="hw-image" alt="hw">`;
+                    } else if (q.image && q.image !== '') {
+                        hwHtml += `<img src="${q.image}" class="hw-image" alt="hw" onerror="this.style.display=\'none\'">`;
+                    }
+                    hwHtml += `
+                        <div>
+                            <input class="answer-input" data-hw="${globalIdx}" data-q="${qidx}" value="${hw.userAnswers[qidx] || ''}">
+                            <button class="check-btn" data-hw="${globalIdx}" data-q="${qidx}">Проверить</button>
+                            <span class="result-badge" id="res-${globalIdx}-${qidx}"></span>
+                        </div>
+                    </div>`;
+                });
+                hwHtml += '</div>';
+            });
+            document.getElementById('studentHWList').innerHTML = hwHtml || '<p style="color:#6f5a67;">Пока нет заданий</p>';
+
+            document.querySelectorAll('.check-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    let hwIdx = e.target.dataset.hw;
+                    let qidx = e.target.dataset.q;
+                    let inp = document.querySelector(`.answer-input[data-hw="${hwIdx}"][data-q="${qidx}"]`);
+                    let ans = parseFloat(inp.value.trim().replace(',','.'));
+                    let hw = attachedHW[hwIdx];
+                    if (!hw) return;
+                    let correct = hw.questions[qidx].answer;
+                    let span = document.getElementById(`res-${hwIdx}-${qidx}`);
+                    let isCorrect = !isNaN(ans) && Math.abs(ans - correct) < 0.001;
+                    span.innerHTML = isCorrect ? '<span class="correct">✓ Верно</span>' : '<span class="wrong">✗ Неверно</span>';
+                    hw.userAnswers[qidx] = inp.value;
+                    saveAll();
+                    if (currentUser.isTeacher) renderResultsTable();
+                });
+            });
+        }
+
+        window.renderStudentCabinet = renderStudentCabinet;
+        saveAll();
+    })();
+</script>
+</body>
+</html>
